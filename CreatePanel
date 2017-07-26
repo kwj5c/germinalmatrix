@@ -1,0 +1,161 @@
+package retina;
+
+import java.awt.Color;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import repast.simphony.engine.environment.RunEnvironmentBuilder;
+import repast.simphony.scenario.ModelInitializer;
+import repast.simphony.scenario.Scenario;
+import repast.simphony.ui.RSApplication;
+
+public class CreatePanel implements ModelInitializer  {
+
+	public void initialize(Scenario scen, RunEnvironmentBuilder builder) {
+		
+		JPanel myPanel = new JPanel();
+		myPanel.setLayout(new GridBagLayout());
+		myPanel.setLayout(new GridLayout(7, 2));
+		
+		String[] startingOptions = { "Load Template", "Make Template", "Bottom to Top VEGF", "Radial VEGF"};
+		JComboBox <String> startingTemplate = new JComboBox <String> (startingOptions);
+		startingTemplate.setSelectedIndex(0);
+		PanelStyle.startingLayout = (String) startingTemplate.getSelectedItem();
+		
+		startingTemplate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PanelStyle.startingLayout = (String) startingTemplate.getSelectedItem();
+			}
+		});
+		
+		JSlider startBranches = new JSlider(JSlider.HORIZONTAL, 0, 100, 30);
+		JLabel startBranchesLabel = new JLabel();
+		startBranches.setMajorTickSpacing(10);
+		startBranches.setMinorTickSpacing(1);
+		startBranches.setPaintTicks(true);
+		startBranches.setPaintLabels(true);
+		startBranches.setSnapToTicks(true);
+		startBranchesLabel.setText(" Number of Branches: " + startBranches.getValue() );
+		PanelStyle.startingBranches = startBranches.getValue();
+		startBranches.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				startBranchesLabel.setText(" Number of Branches: " + source.getValue() );
+				PanelStyle.startingBranches = source.getValue();
+			}
+		});
+		
+		
+		
+		JSlider branchProb = new JSlider(JSlider.HORIZONTAL, 0, 30, 5);
+		JLabel branchProbLabel = new JLabel();
+		branchProb.setMajorTickSpacing(5);
+		branchProb.setMinorTickSpacing(1);
+		branchProb.setPaintTicks(true);
+		branchProb.setPaintLabels(true);
+		branchProb.setSnapToTicks(true);
+		branchProbLabel.setText(" Branching Probability: " + branchProb.getValue() );
+		PanelStyle.branchProbability = branchProb.getValue();
+		branchProb.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				branchProbLabel.setText(" Branching Probability: " + source.getValue() );
+				PanelStyle.branchProbability = branchProb.getValue();
+			}
+		});	
+		
+		String[] cellLayouts = { "ECs", "Sparse EC", "EC and PC" };
+		JComboBox <String> cellLayout = new JComboBox <String> (cellLayouts);
+		cellLayout.setSelectedIndex(2);
+		PanelStyle.cellLayout = (String) cellLayout.getSelectedItem();
+		cellLayout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PanelStyle.cellLayout = (String) cellLayout.getSelectedItem();
+			}
+		});
+		
+		
+		JSlider alpha = new JSlider(JSlider.HORIZONTAL, 0, 10, 1);
+		JLabel alphaLabel = new JLabel();
+		alpha.setMajorTickSpacing(2);
+		alpha.setMinorTickSpacing(1);
+		alpha.setPaintTicks(true);
+		alpha.setPaintLabels(true);
+		alpha.setSnapToTicks(true);
+		alphaLabel.setText(" Alpha: " + alpha.getValue() );
+		PanelStyle.alpha = alpha.getValue();
+		alpha.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				alphaLabel.setText(" Alpha: " + source.getValue() );
+				PanelStyle.alpha = alpha.getValue();
+			}
+		});
+		
+		JSlider beta = new JSlider(JSlider.HORIZONTAL, 0, 150, 40);
+		JLabel betaLabel = new JLabel();
+		beta.setMajorTickSpacing(20);
+		beta.setMinorTickSpacing(5);
+		beta.setPaintTicks(true);
+		beta.setPaintLabels(true);
+		beta.setSnapToTicks(true);
+		betaLabel.setText(" Beta: " + beta.getValue() );
+		PanelStyle.beta = beta.getValue();
+		beta.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				betaLabel.setText(" Beta: " + source.getValue() );
+				PanelStyle.beta = beta.getValue();
+			}
+		});
+		
+		
+		SpinnerModel model = new SpinnerNumberModel(1, 1, 6, 1);
+		JSpinner spinner = new JSpinner(model);
+		PanelStyle.startingTemplate = (int)spinner.getValue();
+		spinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSpinner source = (JSpinner) e.getSource();
+				PanelStyle.startingTemplate = (int) source.getValue();
+			}
+		});
+				 
+		JTextField textField = new JTextField(" ");
+		textField.setBackground(Color.GRAY);
+		
+		
+		myPanel.add(startingTemplate);
+		myPanel.add(spinner);
+		myPanel.add(cellLayout);
+		
+		myPanel.add(textField);
+		
+		myPanel.add(startBranchesLabel);
+		myPanel.add(startBranches);
+		myPanel.add(branchProbLabel);
+		myPanel.add(branchProb);
+		myPanel.add(alphaLabel);
+		myPanel.add(alpha);
+		myPanel.add(betaLabel);
+		myPanel.add(beta);
+		
+		
+		RSApplication.getRSApplicationInstance().addCustomUserPanel(myPanel);
+		
+		PanelStyle.panel = myPanel;
+	}
+	
+	
+}
